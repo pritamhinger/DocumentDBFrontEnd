@@ -67,16 +67,17 @@ namespace DocumentDBFrontEnd
             }
         }
 
-        public static async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
+        public static async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, long>> orderPredicate, int maxCount)
         {
-            FeedOptions options = new FeedOptions { MaxItemCount = 5 };
+            FeedOptions options = new FeedOptions { MaxItemCount = 500 };
             IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), options, "CustomerName")
-                .Where(predicate)
+                .Where(predicate).OrderByDescending(orderPredicate).Take(maxCount)
                 .AsDocumentQuery();
 
             List<T> results = new List<T>();
-            while (query.HasMoreResults)
+            
+            while (query.HasMoreResults && results.Count < maxCount)
             {
                 results.AddRange(await query.ExecuteNextAsync<T>());
             }

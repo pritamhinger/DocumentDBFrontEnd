@@ -16,12 +16,18 @@ namespace DocumentDBFrontEnd.Controllers
         public async Task<ActionResult> IndexAsync()
         {
             var customerName = "Microsoft";
+            int maxCount = 500;
             if (Request.QueryString["customerName"] != null)
             {
                 customerName = Request.QueryString["customerName"].ToString();
             }
 
-            var items = await DocumentDBRepository<Log>.GetItemsAsync(d => d.CustomerName == customerName);
+            if(Request.QueryString["maxCount"] != null)
+            {
+                int.TryParse(Request.QueryString["maxCount"].ToString(), out maxCount);
+            }
+
+            var items = await DocumentDBRepository<Log>.GetItemsAsync(d => d.CustomerName == customerName, d => d.ActivityDateTimeTicks, maxCount);
             return View(items);
         }
     }

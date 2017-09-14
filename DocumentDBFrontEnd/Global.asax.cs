@@ -16,6 +16,7 @@ namespace DocumentDBFrontEnd
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            DocumentDBRepository<DocumentDBFrontEnd.Models.Log>.Initialize();
         }
     }
 }

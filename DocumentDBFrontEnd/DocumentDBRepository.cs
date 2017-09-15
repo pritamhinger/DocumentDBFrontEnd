@@ -84,5 +84,23 @@ namespace DocumentDBFrontEnd
 
             return results;
         }
+
+        public static async Task<IEnumerable<T>> GetItemsAsyncAll(Expression<Func<T, bool>> predicate, Expression<Func<T, long>> orderPredicate)
+        {
+            FeedOptions options = new FeedOptions { MaxItemCount = 500 };
+            IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
+                UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), options, "CustomerName")
+                .Where(predicate).OrderByDescending(orderPredicate)
+                .AsDocumentQuery();
+
+            List<T> results = new List<T>();
+
+            while (query.HasMoreResults)
+            {
+                results.AddRange(await query.ExecuteNextAsync<T>());
+            }
+
+            return results;
+        }
     }
 }

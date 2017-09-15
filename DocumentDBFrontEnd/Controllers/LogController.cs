@@ -16,7 +16,7 @@ namespace DocumentDBFrontEnd.Controllers
         public async Task<ActionResult> IndexAsync()
         {
             var customerName = "Microsoft";
-            int maxCount = 500;
+            int maxCount = 10;
             if (Request.QueryString["customerName"] != null)
             {
                 customerName = Request.QueryString["customerName"].ToString();

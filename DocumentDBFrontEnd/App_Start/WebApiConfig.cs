@@ -11,8 +11,8 @@ namespace DocumentDBFrontEnd
     {
         public static void Register(HttpConfiguration configuration)
         {
-            configuration.Routes.MapHttpRoute("API Default", "api/{controller}/{customerName}/{size}",
-              new { customerName = RouteParameter.Optional,  size = RouteParameter.Optional});
+            configuration.Routes.MapHttpRoute("API Default", "api/{controller}/{customerName}/{pageNumber}",
+              new { customerName = RouteParameter.Optional, pageNumber = RouteParameter.Optional});
             configuration.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
         }
     }

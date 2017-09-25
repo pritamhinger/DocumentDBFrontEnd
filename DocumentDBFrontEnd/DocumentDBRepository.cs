@@ -87,20 +87,30 @@ namespace DocumentDBFrontEnd
 
         public static async Task<IEnumerable<T>> GetItemsAsyncAll(Expression<Func<T, bool>> predicate, Expression<Func<T, long>> orderPredicate)
         {
-            FeedOptions options = new FeedOptions { MaxItemCount = 500 };
-            IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
-                UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), options, "CustomerName")
-                .Where(predicate).OrderByDescending(orderPredicate)
-                .AsDocumentQuery();
-
-            List<T> results = new List<T>();
-
-            while (query.HasMoreResults)
+            try
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
-            }
+                FeedOptions options = new FeedOptions { MaxItemCount = 500 };
+                //FeedOptions options = new FeedOptions { MaxItemCount = 500, PartitionKey = new PartitionKey("CustomerName") };
+                IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
+                    UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), options, "CustomerName")
+                    .Where(predicate).OrderByDescending(orderPredicate)
+                    .AsDocumentQuery();
 
-            return results;
+                List<T> results = new List<T>();
+                
+                while (query.HasMoreResults)
+                {
+                    results = new List<T>();
+                    results.AddRange(await query.ExecuteNextAsync<T>());
+                }
+
+                int count = results.Count;
+                return results;
+            }
+            catch (Exception ex)
+            {
+                return new List<T>();
+            }
         }
     }
 }
